@@ -68,7 +68,8 @@ jobs:
         id: platform_slug
         run: |
           # Transform linux/amd64 -> linux-amd64
-          echo "slug=${{ matrix.platform }}" | sed 's/\]/-\]/g' >> $GITHUB_OUTPUT
+          slug=$(echo "${{ matrix.platform }}" | sed 's/\//-/g')
+          echo "slug=$slug" >> $GITHUB_OUTPUT
 
       - name: Build and push by digest
         id: build
