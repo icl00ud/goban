@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { useAuth } from '@/context/AuthContext'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -7,6 +8,7 @@ import { Label } from '@/components/ui/label'
 import { AlertCircle, ArrowRight, Loader2 } from 'lucide-react'
 
 export function LoginForm() {
+  const { t } = useTranslation()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -23,7 +25,7 @@ export function LoginForm() {
       await login(email, password)
       navigate('/')
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Login failed')
+      setError(err instanceof Error ? err.message : t('errors.generic'))
     } finally {
       setLoading(false)
     }
@@ -40,9 +42,9 @@ export function LoginForm() {
             className="h-16 w-auto drop-shadow-lg transition-transform group-hover:scale-105"
           />
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">GoBan</h1>
+            <h1 className="text-3xl font-bold tracking-tight">{t('app.name')}</h1>
             <p className="text-sm text-muted-foreground">
-              Your minimalist Kanban board
+              {t('app.tagline')}
             </p>
           </div>
         </Link>
@@ -51,9 +53,9 @@ export function LoginForm() {
       {/* Form Card */}
       <div className="bg-card border rounded-xl p-8 shadow-lg shadow-black/5 dark:shadow-black/20">
         <div className="mb-6">
-          <h2 className="text-xl font-semibold">Welcome back</h2>
+          <h2 className="text-xl font-semibold">{t('auth.welcomeBack')}</h2>
           <p className="text-sm text-muted-foreground mt-1">
-            Sign in to continue to your boards
+            {t('auth.loginSubtitle')}
           </p>
         </div>
 
@@ -66,13 +68,13 @@ export function LoginForm() {
           )}
 
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{t('auth.email')}</Label>
             <Input
               id="email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
+              placeholder={t('auth.emailPlaceholder')}
               required
               className="h-11"
               autoComplete="email"
@@ -80,13 +82,13 @@ export function LoginForm() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">{t('auth.password')}</Label>
             <Input
               id="password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter your password"
+              placeholder="••••••••"
               required
               className="h-11"
               autoComplete="current-password"
@@ -101,11 +103,11 @@ export function LoginForm() {
             {loading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Signing in...
+                {t('auth.signingIn')}
               </>
             ) : (
               <>
-                Sign in
+                {t('auth.signIn')}
                 <ArrowRight className="ml-2 h-4 w-4" />
               </>
             )}
@@ -114,12 +116,12 @@ export function LoginForm() {
 
         <div className="mt-6 pt-6 border-t text-center">
           <p className="text-sm text-muted-foreground">
-            Don't have an account?{' '}
+            {t('auth.noAccount')}{' '}
             <Link
               to="/register"
               className="text-primary font-medium hover:underline underline-offset-4"
             >
-              Create one
+              {t('auth.register')}
             </Link>
           </p>
         </div>

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { useAuth } from '@/context/AuthContext'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -7,6 +8,7 @@ import { Label } from '@/components/ui/label'
 import { AlertCircle, ArrowRight, Loader2, UserPlus } from 'lucide-react'
 
 export function RegisterForm() {
+  const { t } = useTranslation()
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -24,7 +26,7 @@ export function RegisterForm() {
       await register(email, password, name)
       navigate('/')
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Registration failed')
+      setError(err instanceof Error ? err.message : t('errors.generic'))
     } finally {
       setLoading(false)
     }
@@ -41,9 +43,9 @@ export function RegisterForm() {
             className="h-16 w-auto drop-shadow-lg transition-transform group-hover:scale-105"
           />
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">GoBan</h1>
+            <h1 className="text-3xl font-bold tracking-tight">{t('app.name')}</h1>
             <p className="text-sm text-muted-foreground">
-              Your minimalist Kanban board
+              {t('app.tagline')}
             </p>
           </div>
         </Link>
@@ -54,10 +56,10 @@ export function RegisterForm() {
         <div className="mb-6">
           <div className="flex items-center gap-2 mb-1">
             <UserPlus className="h-5 w-5 text-primary" />
-            <h2 className="text-xl font-semibold">Create account</h2>
+            <h2 className="text-xl font-semibold">{t('auth.createAccountTitle')}</h2>
           </div>
           <p className="text-sm text-muted-foreground">
-            Start organizing your projects today
+            {t('auth.registerSubtitle')}
           </p>
         </div>
 
@@ -70,13 +72,13 @@ export function RegisterForm() {
           )}
 
           <div className="space-y-2">
-            <Label htmlFor="name">Name</Label>
+            <Label htmlFor="name">{t('auth.name')}</Label>
             <Input
               id="name"
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Your name"
+              placeholder={t('auth.namePlaceholder')}
               required
               className="h-11"
               autoComplete="name"
@@ -84,13 +86,13 @@ export function RegisterForm() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{t('auth.email')}</Label>
             <Input
               id="email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
+              placeholder={t('auth.emailPlaceholder')}
               required
               className="h-11"
               autoComplete="email"
@@ -98,13 +100,13 @@ export function RegisterForm() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">{t('auth.password')}</Label>
             <Input
               id="password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Min. 6 characters"
+              placeholder="••••••••"
               minLength={6}
               required
               className="h-11"
@@ -120,11 +122,11 @@ export function RegisterForm() {
             {loading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Creating account...
+                {t('auth.creatingAccount')}
               </>
             ) : (
               <>
-                Create account
+                {t('auth.createAccount')}
                 <ArrowRight className="ml-2 h-4 w-4" />
               </>
             )}
@@ -133,12 +135,12 @@ export function RegisterForm() {
 
         <div className="mt-6 pt-6 border-t text-center">
           <p className="text-sm text-muted-foreground">
-            Already have an account?{' '}
+            {t('auth.hasAccount')}{' '}
             <Link
               to="/login"
               className="text-primary font-medium hover:underline underline-offset-4"
             >
-              Sign in
+              {t('auth.login')}
             </Link>
           </p>
         </div>

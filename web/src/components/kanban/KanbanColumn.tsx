@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useDroppable } from '@dnd-kit/core'
 import {
   SortableContext,
@@ -32,6 +33,7 @@ export function KanbanColumn({
   onDeleteCard,
   onUpdateCard,
 }: KanbanColumnProps) {
+  const { t } = useTranslation()
   const [addingCard, setAddingCard] = useState(false)
   const [newCardTitle, setNewCardTitle] = useState('')
 
@@ -85,7 +87,7 @@ export function KanbanColumn({
               onClick={() => onDeleteColumn(column.id)}
             >
               <Trash2 className="mr-2 h-4 w-4" />
-              Delete column
+              {t('column.delete')}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -107,13 +109,6 @@ export function KanbanColumn({
             />
           ))}
         </SortableContext>
-
-        {/* Empty state */}
-        {cards.length === 0 && !addingCard && (
-          <div className="py-8 text-center text-sm text-muted-foreground">
-            No cards yet
-          </div>
-        )}
       </div>
 
       {/* Add Card */}
@@ -123,7 +118,7 @@ export function KanbanColumn({
             <Input
               value={newCardTitle}
               onChange={(e) => setNewCardTitle(e.target.value)}
-              placeholder="Enter card title..."
+              placeholder={t('card.titlePlaceholder')}
               autoFocus
               className="bg-background"
               onKeyDown={(e) => {
@@ -136,7 +131,7 @@ export function KanbanColumn({
             />
             <div className="flex gap-2">
               <Button size="sm" onClick={handleAddCard} className="flex-1">
-                Add card
+                {t('board.add')}
               </Button>
               <Button
                 size="sm"
@@ -158,7 +153,7 @@ export function KanbanColumn({
             onClick={() => setAddingCard(true)}
           >
             <Plus className="mr-2 h-4 w-4" />
-            Add card
+            {t('column.addCard')}
           </Button>
         )}
       </div>

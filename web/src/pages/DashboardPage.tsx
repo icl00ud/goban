@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import {
   DndContext,
   DragOverlay,
@@ -46,7 +47,7 @@ const BOARD_COLORS = [
 ]
 
 // Sortable Board Card Component
-function SortableBoardCard({ board }: { board: Board }) {
+function SortableBoardCard({ board, t }: { board: Board; t: (key: string, options?: Record<string, unknown>) => string }) {
   const {
     attributes,
     listeners,
@@ -60,6 +61,9 @@ function SortableBoardCard({ board }: { board: Board }) {
     transform: CSS.Transform.toString(transform),
     transition,
   }
+
+  const columnCount = board.columns?.length || 0
+  const cardCount = board.columns?.reduce((acc, col) => acc + (col.cards?.length || 0), 0) || 0
 
   return (
     <div
@@ -110,10 +114,8 @@ function SortableBoardCard({ board }: { board: Board }) {
           {/* Board stats */}
           <div className="flex items-center justify-between mt-4 pt-4 border-t">
             <div className="flex items-center gap-3 text-xs text-muted-foreground">
-              <span>{board.columns?.length || 0} columns</span>
-              <span>
-                {board.columns?.reduce((acc, col) => acc + (col.cards?.length || 0), 0) || 0} cards
-              </span>
+              <span>{t('dashboard.columns', { count: columnCount })}</span>
+              <span>{t('dashboard.cards', { count: cardCount })}</span>
             </div>
             <ArrowRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 group-hover:text-primary transition-all" />
           </div>
@@ -144,6 +146,7 @@ function BoardCardOverlay({ board }: { board: Board }) {
 }
 
 export function DashboardPage() {
+  const { t } = useTranslation()
   const [boards, setBoards] = useState<Board[]>([])
   const [loading, setLoading] = useState(true)
   const [dialogOpen, setDialogOpen] = useState(false)
@@ -245,7 +248,7 @@ export function DashboardPage() {
     return (
       <div className="flex flex-col items-center justify-center h-64 gap-3">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <p className="text-sm text-muted-foreground">Loading your boards...</p>
+        <p className="text-sm text-muted-foreground">{t('dashboard.loadingBoards')}</p>
       </div>
     )
   }
@@ -255,48 +258,48 @@ export function DashboardPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">My Boards</h1>
+          <h1 className="text-2xl font-bold tracking-tight">{t('dashboard.title')}</h1>
           <p className="text-muted-foreground mt-1">
             {boards.length === 0
-              ? 'Create your first board to get started'
-              : `${boards.length} board${boards.length !== 1 ? 's' : ''} • Drag to reorder`}
+              ? t('dashboard.emptyState')
+              : `${t('dashboard.boardCount', { count: boards.length })} • ${t('dashboard.dragHint')}`}
           </p>
         </div>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
             <Button className="gap-2">
               <Plus className="h-4 w-4" />
-              New Board
+              {t('dashboard.newBoard')}
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
-              <DialogTitle>Create New Board</DialogTitle>
+              <DialogTitle>{t('board.create')}</DialogTitle>
             </DialogHeader>
             <form onSubmit={handleCreateBoard} className="space-y-5 mt-4">
               <div className="space-y-2">
-                <Label htmlFor="name">Board name</Label>
+                <Label htmlFor="name">{t('board.name')}</Label>
                 <Input
                   id="name"
                   value={newBoardName}
                   onChange={(e) => setNewBoardName(e.target.value)}
-                  placeholder="My Project"
+                  placeholder={t('board.namePlaceholder')}
                   required
                   className="h-11"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="description">Description (optional)</Label>
+                <Label htmlFor="description">{t('board.description')}</Label>
                 <Input
                   id="description"
                   value={newBoardDescription}
                   onChange={(e) => setNewBoardDescription(e.target.value)}
-                  placeholder="A brief description..."
+                  placeholder={t('board.descriptionPlaceholder')}
                   className="h-11"
                 />
               </div>
               <div className="space-y-2">
-                <Label>Color</Label>
+                <Label>{t('board.color')}</Label>
                 <div className="flex gap-2 flex-wrap">
                   {BOARD_COLORS.map((color) => (
                     <button
@@ -316,10 +319,10 @@ export function DashboardPage() {
                 {creating ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Creating...
+                    {t('board.creating')}
                   </>
                 ) : (
-                  'Create Board'
+                  t('board.createButton')
                 )}
               </Button>
             </form>
@@ -333,13 +336,13 @@ export function DashboardPage() {
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 mb-4">
             <Kanban className="h-8 w-8 text-primary" />
           </div>
-          <h2 className="text-xl font-semibold mb-2">No boards yet</h2>
+          <h2 className="text-xl font-semibold mb-2">{t('dashboard.noBoardsTitle')}</h2>
           <p className="text-muted-foreground mb-6 max-w-sm mx-auto">
-            Create your first board to start organizing your tasks with drag & drop Kanban columns.
+            {t('dashboard.noBoardsDescription')}
           </p>
           <Button onClick={() => setDialogOpen(true)} className="gap-2">
             <Plus className="h-4 w-4" />
-            Create your first board
+            {t('dashboard.createFirst')}
           </Button>
         </div>
       ) : (
@@ -358,7 +361,7 @@ export function DashboardPage() {
                   className="animate-slide-up"
                   style={{ animationDelay: `${index * 50}ms` }}
                 >
-                  <SortableBoardCard board={board} />
+                  <SortableBoardCard board={board} t={t} />
                 </div>
               ))}
             </div>

@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { useAuth } from '@/context/AuthContext'
 import { useTheme } from '@/context/ThemeContext'
 import { Button } from '@/components/ui/button'
@@ -8,10 +9,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Moon, Sun, User, LogOut, ChevronDown } from 'lucide-react'
+import { Moon, Sun, User, LogOut, ChevronDown, Languages } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
+import { languages } from '@/lib/i18n'
 
 export function Header() {
+  const { t, i18n } = useTranslation()
   const { user, logout } = useAuth()
   const { toggleTheme } = useTheme()
   const navigate = useNavigate()
@@ -20,6 +23,8 @@ export function Header() {
     await logout()
     navigate('/login')
   }
+
+  const currentLanguage = languages.find((l) => l.code === i18n.language) || languages[0]
 
   return (
     <header className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur-lg">
@@ -38,7 +43,7 @@ export function Header() {
             <div className="absolute inset-0 bg-primary/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
           </div>
           <div className="flex flex-col">
-            <span className="text-xl font-bold tracking-tight">GoBan</span>
+            <span className="text-xl font-bold tracking-tight">{t('app.name')}</span>
             <span className="text-[10px] text-muted-foreground font-medium -mt-1 tracking-wider uppercase">
               Kanban Board
             </span>
@@ -47,6 +52,34 @@ export function Header() {
 
         {/* Actions */}
         <div className="flex items-center gap-2">
+          {/* Language Switcher */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label="Change language"
+                className="relative"
+              >
+                <Languages className="h-5 w-5" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-40 animate-scale-in">
+              {languages.map((lang) => (
+                <DropdownMenuItem
+                  key={lang.code}
+                  onClick={() => i18n.changeLanguage(lang.code)}
+                  className={`cursor-pointer ${
+                    currentLanguage.code === lang.code ? 'bg-primary/10 text-primary' : ''
+                  }`}
+                >
+                  <span className="mr-2">{lang.flag}</span>
+                  {lang.name}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
           {/* Theme Toggle */}
           <Button
             variant="ghost"
@@ -89,7 +122,7 @@ export function Header() {
                   className="text-destructive focus:text-destructive cursor-pointer"
                 >
                   <LogOut className="mr-2 h-4 w-4" />
-                  Sign out
+                  {t('nav.logout')}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

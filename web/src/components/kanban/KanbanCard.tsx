@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import type { Card } from '@/types'
@@ -28,21 +29,18 @@ interface KanbanCardProps {
   onUpdate: (card: Card) => void
 }
 
-const priorityConfig = {
+const priorityStyles = {
   low: {
-    label: 'Low',
     badgeClass: 'priority-low',
     btnClass: 'priority-btn-low',
     dotColor: 'bg-green-500',
   },
   medium: {
-    label: 'Medium',
     badgeClass: 'priority-medium',
     btnClass: 'priority-btn-medium',
     dotColor: 'bg-yellow-500',
   },
   high: {
-    label: 'High',
     badgeClass: 'priority-high',
     btnClass: 'priority-btn-high',
     dotColor: 'bg-red-500',
@@ -55,6 +53,7 @@ export function KanbanCard({
   onDelete,
   onUpdate,
 }: KanbanCardProps) {
+  const { t } = useTranslation()
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editTitle, setEditTitle] = useState(card.title)
   const [editDescription, setEditDescription] = useState(card.description)
@@ -90,7 +89,13 @@ export function KanbanCard({
     setDialogOpen(false)
   }
 
-  const priority = priorityConfig[card.priority]
+  const priorityLabels = {
+    low: t('card.priorityLow'),
+    medium: t('card.priorityMedium'),
+    high: t('card.priorityHigh'),
+  }
+
+  const priority = priorityStyles[card.priority]
 
   return (
     <>
@@ -129,7 +134,7 @@ export function KanbanCard({
                 }}
               >
                 <Trash2 className="mr-2 h-4 w-4" />
-                Delete
+                {t('card.delete')}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -151,7 +156,7 @@ export function KanbanCard({
             )}
           >
             <Flag className="h-2.5 w-2.5" />
-            {priority.label}
+            {priorityLabels[card.priority]}
           </span>
         </div>
       </div>
@@ -160,11 +165,11 @@ export function KanbanCard({
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Edit Card</DialogTitle>
+            <DialogTitle>{t('card.edit')}</DialogTitle>
           </DialogHeader>
           <div className="space-y-5 mt-4">
             <div className="space-y-2">
-              <Label htmlFor="title">Title</Label>
+              <Label htmlFor="title">{t('card.title')}</Label>
               <Input
                 id="title"
                 value={editTitle}
@@ -173,20 +178,20 @@ export function KanbanCard({
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
+              <Label htmlFor="description">{t('card.description')}</Label>
               <textarea
                 id="description"
                 value={editDescription}
                 onChange={(e) => setEditDescription(e.target.value)}
                 className="flex min-h-[100px] w-full rounded-lg border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none"
-                placeholder="Add a description..."
+                placeholder={t('card.descriptionPlaceholder')}
               />
             </div>
             <div className="space-y-2">
-              <Label>Priority</Label>
+              <Label>{t('card.priority')}</Label>
               <div className="flex gap-2">
                 {(['low', 'medium', 'high'] as const).map((p) => {
-                  const config = priorityConfig[p]
+                  const config = priorityStyles[p]
                   const isSelected = editPriority === p
                   return (
                     <Button
@@ -206,7 +211,7 @@ export function KanbanCard({
                           isSelected ? 'bg-white/90' : config.dotColor
                         )}
                       />
-                      {config.label}
+                      {priorityLabels[p]}
                     </Button>
                   )
                 })}
@@ -214,9 +219,9 @@ export function KanbanCard({
             </div>
             <div className="flex justify-end gap-2 pt-2">
               <Button variant="outline" onClick={() => setDialogOpen(false)}>
-                Cancel
+                {t('card.cancel')}
               </Button>
-              <Button onClick={handleSave}>Save changes</Button>
+              <Button onClick={handleSave}>{t('card.save')}</Button>
             </div>
           </div>
         </DialogContent>

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { boardApi } from '@/lib/api'
 import type { Board } from '@/types'
 import { Button } from '@/components/ui/button'
@@ -13,6 +14,7 @@ import {
 import { ArrowLeft, Trash2, MoreVertical, Loader2, AlertCircle } from 'lucide-react'
 
 export function BoardPage() {
+  const { t } = useTranslation()
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const [board, setBoard] = useState<Board | null>(null)
@@ -31,10 +33,10 @@ export function BoardPage() {
       if (response.success && response.data) {
         setBoard(response.data)
       } else {
-        setError(response.error || 'Failed to load board')
+        setError(response.error || t('errors.loadBoard'))
       }
-    } catch (err) {
-      setError('Failed to load board')
+    } catch {
+      setError(t('errors.loadBoard'))
     } finally {
       setLoading(false)
     }
@@ -42,7 +44,7 @@ export function BoardPage() {
 
   const handleDeleteBoard = async () => {
     if (!board) return
-    if (!confirm('Are you sure you want to delete this board? This action cannot be undone.')) return
+    if (!confirm(t('column.deleteConfirm'))) return
 
     try {
       const response = await boardApi.delete(board.id)
@@ -58,7 +60,7 @@ export function BoardPage() {
     return (
       <div className="flex flex-col items-center justify-center h-64 gap-3 animate-fade-in">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <p className="text-sm text-muted-foreground">Loading board...</p>
+        <p className="text-sm text-muted-foreground">{t('board.loadingBoard')}</p>
       </div>
     )
   }
@@ -70,13 +72,13 @@ export function BoardPage() {
           <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-destructive/10 mb-4">
             <AlertCircle className="h-6 w-6 text-destructive" />
           </div>
-          <h2 className="text-lg font-semibold mb-2">Board not found</h2>
+          <h2 className="text-lg font-semibold mb-2">{t('board.notFound')}</h2>
           <p className="text-muted-foreground mb-6">
-            {error || "The board you're looking for doesn't exist or has been deleted."}
+            {error || t('board.notFoundDescription')}
           </p>
           <Button onClick={() => navigate('/')}>
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Dashboard
+            {t('board.backToDashboard')}
           </Button>
         </div>
       </div>
@@ -123,7 +125,7 @@ export function BoardPage() {
               onClick={handleDeleteBoard}
             >
               <Trash2 className="mr-2 h-4 w-4" />
-              Delete board
+              {t('board.delete')}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

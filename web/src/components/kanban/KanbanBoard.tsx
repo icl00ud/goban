@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
   DndContext,
   DragOverlay,
@@ -30,6 +31,7 @@ interface KanbanBoardProps {
 }
 
 export function KanbanBoard({ board }: KanbanBoardProps) {
+  const { t } = useTranslation()
   const [columns, setColumns] = useState<Column[]>(board.columns || [])
   const [activeCard, setActiveCard] = useState<Card | null>(null)
   const [newColumnTitle, setNewColumnTitle] = useState('')
@@ -273,7 +275,7 @@ export function KanbanBoard({ board }: KanbanBoardProps) {
               <Input
                 value={newColumnTitle}
                 onChange={(e) => setNewColumnTitle(e.target.value)}
-                placeholder="Enter column title..."
+                placeholder={t('board.columnPlaceholder')}
                 autoFocus
                 className="bg-background"
                 onKeyDown={(e) => {
@@ -286,7 +288,7 @@ export function KanbanBoard({ board }: KanbanBoardProps) {
               />
               <div className="flex gap-2">
                 <Button size="sm" onClick={handleAddColumn} className="flex-1">
-                  Add column
+                  {t('board.add')}
                 </Button>
                 <Button
                   size="sm"
@@ -307,7 +309,7 @@ export function KanbanBoard({ board }: KanbanBoardProps) {
               onClick={() => setAddingColumn(true)}
             >
               <Plus className="mr-2 h-4 w-4" />
-              Add column
+              {t('board.addColumn')}
             </Button>
           )}
         </div>
