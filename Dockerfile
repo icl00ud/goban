@@ -7,7 +7,8 @@ WORKDIR /app/web
 COPY web/package.json web/bun.lock* ./
 
 # Install dependencies
-RUN bun install --frozen-lockfile
+RUN --mount=type=cache,target=/root/.bun/install/cache \
+    bun install --frozen-lockfile
 
 # Copy source code
 COPY web/ ./
@@ -27,7 +28,8 @@ WORKDIR /app
 COPY go.mod go.sum ./
 
 # Download dependencies
-RUN go mod download
+RUN --mount=type=cache,target=/go/pkg/mod \
+    go mod download
 
 # Copy source code
 COPY . .
@@ -37,7 +39,9 @@ COPY --from=frontend-builder /app/web/dist ./web/dist
 
 # Build with embedded files
 # CGO_ENABLED=1 needed for SQLite
-RUN CGO_ENABLED=1 GOOS=linux go build -a -ldflags '-linkmode external -extldflags "-static"' -o goban ./cmd/server
+RUN --mount=type=cache,target=/go/pkg/mod \
+    --mount=type=cache,target=/root/.cache/go-build \
+    CGO_ENABLED=1 GOOS=linux go build -a -ldflags '-linkmode external -extldflags "-static"' -o goban ./cmd/server
 
 # Stage 3: Production Runtime
 FROM alpine:3.19 AS production
