@@ -54,7 +54,11 @@ func main() {
 
 	// Middleware
 	app.Use(recover.New())
-	app.Use(logger.New())
+	app.Use(logger.New(logger.Config{
+		Next: func(c *fiber.Ctx) bool {
+			return c.Path() == "/api/v1/health"
+		},
+	}))
 	app.Use(compress.New(compress.Config{
 		Level: compress.LevelBestSpeed, // Optimize for speed in production
 	}))
