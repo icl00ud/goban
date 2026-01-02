@@ -4,10 +4,16 @@ import (
 	"io/fs"
 	"log"
 	"net/http"
+	"os"
+	"os/signal"
 	"strings"
+	"syscall"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/compress"
 	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/etag"
 	"github.com/gofiber/fiber/v2/middleware/filesystem"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
@@ -49,6 +55,10 @@ func main() {
 	// Middleware
 	app.Use(recover.New())
 	app.Use(logger.New())
+	app.Use(compress.New(compress.Config{
+		Level: compress.LevelBestSpeed, // Optimize for speed in production
+	}))
+	app.Use(etag.New())
 	app.Use(cors.New(cors.Config{
 		AllowOrigins:     "http://localhost:5173,http://localhost:8080",
 		AllowCredentials: true,
@@ -63,10 +73,24 @@ func main() {
 	setupStaticServing(app)
 
 	// Start server
-	log.Printf("Starting server on port %s", cfg.Port)
-	if err := app.Listen(":" + cfg.Port); err != nil {
-		log.Fatalf("Failed to start server: %v", err)
+	go func() {
+		log.Printf("Starting server on port %s", cfg.Port)
+		if err := app.Listen(":" + cfg.Port); err != nil && err != http.ErrServerClosed {
+			log.Fatalf("Failed to start server: %v", err)
+		}
+	}()
+
+	// Graceful shutdown
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+
+	log.Println("Shutting down server...")
+	if err := app.ShutdownWithTimeout(5 * time.Second); err != nil {
+		log.Fatalf("Server forced to shutdown: %v", err)
 	}
+
+	log.Println("Server exited")
 }
 
 // setupStaticServing configures static file serving from embedded files with SPA fallback
@@ -82,6 +106,7 @@ func setupStaticServing(app *fiber.App) {
 	app.Use("/assets", filesystem.New(filesystem.Config{
 		Root:   http.FS(distFS),
 		Browse: false,
+		MaxAge: 60 * 60 * 24 * 30, // 30 days
 	}))
 
 	// SPA fallback: serve index.html for all non-API routes

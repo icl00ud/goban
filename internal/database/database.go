@@ -3,6 +3,7 @@ package database
 import (
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/icl00ud/goban/internal/config"
 	"github.com/icl00ud/goban/internal/models"
@@ -19,7 +20,14 @@ func Connect(cfg *config.Config) (*gorm.DB, error) {
 	case "postgres":
 		dialector = postgres.Open(cfg.DatabaseURL)
 	case "sqlite":
-		dialector = sqlite.Open(cfg.DatabaseURL)
+		// Enable WAL mode for better concurrency and performance
+		// _busy_timeout=5000: Wait up to 5000ms if the DB is locked
+		// _foreign_keys=on: Enforce foreign key constraints
+		dsn := cfg.DatabaseURL
+		if !strings.Contains(dsn, "?") {
+			dsn += "?_journal_mode=WAL&_busy_timeout=5000&_foreign_keys=on"
+		}
+		dialector = sqlite.Open(dsn)
 	default:
 		return nil, fmt.Errorf("unsupported database driver: %s", cfg.DBDriver)
 	}
