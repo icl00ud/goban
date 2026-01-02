@@ -1,0 +1,42 @@
+# Git
+.git
+.gitignore
+
+# Dependencies
+node_modules
+web/node_modules
+
+# Build outputs
+bin
+*.exe
+web/dist
+
+# Database files
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test files
+coverage.out
+coverage.html
+
+# Documentation
+*.md
+!README.md
