@@ -64,9 +64,9 @@ func Setup(app *fiber.App, db *gorm.DB, cfg *config.Config) {
 
 	// Card routes
 	protected.Post("/columns/:columnId/cards", cardHandler.Create)
+	protected.Put("/cards/reorder", cardHandler.Reorder) // Must be before /cards/:id routes
 	protected.Get("/cards/:id", cardHandler.Get)
 	protected.Put("/cards/:id", cardHandler.Update)
 	protected.Delete("/cards/:id", cardHandler.Delete)
 	protected.Put("/cards/:id/move", cardHandler.Move)
-	protected.Put("/cards/reorder", cardHandler.Reorder)
 }
