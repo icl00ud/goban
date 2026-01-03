@@ -34,6 +34,7 @@ export function KanbanBoard({ board }: KanbanBoardProps) {
   const { t } = useTranslation()
   const [columns, setColumns] = useState<Column[]>(board.columns || [])
   const [activeCard, setActiveCard] = useState<Card | null>(null)
+  const [originalColumnId, setOriginalColumnId] = useState<number | null>(null)
   const [newColumnTitle, setNewColumnTitle] = useState('')
   const [addingColumn, setAddingColumn] = useState(false)
 
@@ -51,7 +52,9 @@ export function KanbanBoard({ board }: KanbanBoardProps) {
     const activeData = active.data.current
 
     if (activeData?.type === 'card') {
-      setActiveCard(activeData.card)
+      const card = activeData.card as Card
+      setActiveCard(card)
+      setOriginalColumnId(card.column_id)
     }
   }
 
@@ -104,8 +107,10 @@ export function KanbanBoard({ board }: KanbanBoardProps) {
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event
     setActiveCard(null)
+    const sourceColumnId = originalColumnId
+    setOriginalColumnId(null)
 
-    if (!over) return
+    if (!over || sourceColumnId === null) return
 
     const activeData = active.data.current
     const overData = over.data.current
@@ -116,7 +121,7 @@ export function KanbanBoard({ board }: KanbanBoardProps) {
         ? (overData.card as Card).column_id
         : overData?.type === 'column'
           ? overData.column.id
-          : card.column_id
+          : sourceColumnId
 
       // Find position
       const targetColumn = columns.find((c) => c.id === overColumnId)
@@ -126,7 +131,7 @@ export function KanbanBoard({ board }: KanbanBoardProps) {
         : cards.length
 
       try {
-        if (card.column_id !== overColumnId) {
+        if (sourceColumnId !== overColumnId) {
           // Move to different column
           await cardApi.move(card.id, {
             target_column_id: overColumnId,

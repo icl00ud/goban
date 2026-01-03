@@ -52,6 +52,22 @@ func (r *BoardRepository) FindAllByUserID(userID uint) ([]models.Board, error) {
 	return boards, err
 }
 
+// FindAllByUserIDWithDetails finds all boards for a user with columns and cards
+func (r *BoardRepository) FindAllByUserIDWithDetails(userID uint) ([]models.Board, error) {
+	var boards []models.Board
+	err := r.db.
+		Where("user_id = ?", userID).
+		Preload("Columns", func(db *gorm.DB) *gorm.DB {
+			return db.Order("position ASC")
+		}).
+		Preload("Columns.Cards", func(db *gorm.DB) *gorm.DB {
+			return db.Order("position ASC")
+		}).
+		Order("position ASC, created_at DESC").
+		Find(&boards).Error
+	return boards, err
+}
+
 // GetMaxPosition returns the highest position for a user's boards
 func (r *BoardRepository) GetMaxPosition(userID uint) int {
 	var maxPos int

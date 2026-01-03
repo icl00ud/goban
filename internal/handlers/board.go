@@ -29,14 +29,7 @@ func (h *BoardHandler) List(c *fiber.Ctx) error {
 
 	response := make([]dto.BoardResponse, len(boards))
 	for i, board := range boards {
-		response[i] = dto.BoardResponse{
-			ID:          board.ID,
-			Name:        board.Name,
-			Description: board.Description,
-			Color:       board.Color,
-			Position:    board.Position,
-			CreatedAt:   board.CreatedAt.Format("2006-01-02T15:04:05Z"),
-		}
+		response[i] = toBoardResponse(&board)
 	}
 
 	return utils.Success(c, response)

@@ -82,9 +82,9 @@ func (s *BoardService) GetByID(boardID, userID uint) (*models.Board, error) {
 	return board, nil
 }
 
-// GetAllByUser retrieves all boards for a user
+// GetAllByUser retrieves all boards for a user with columns and cards
 func (s *BoardService) GetAllByUser(userID uint) ([]models.Board, error) {
-	return s.boardRepo.FindAllByUserID(userID)
+	return s.boardRepo.FindAllByUserIDWithDetails(userID)
 }
 
 // Update updates a board with ownership check
