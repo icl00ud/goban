@@ -2,13 +2,16 @@ import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '@/context/AuthContext'
+import { useTheme } from '@/context/ThemeContext'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { AlertCircle, ArrowRight, Loader2 } from 'lucide-react'
+import { AlertCircle, ArrowRight, Loader2, Moon, Sun } from 'lucide-react'
+import { LanguageSwitcher } from '@/components/LanguageSwitcher'
 
 export function LoginForm() {
   const { t } = useTranslation()
+  const { toggleTheme } = useTheme()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -33,6 +36,21 @@ export function LoginForm() {
 
   return (
     <div className="w-full max-w-md animate-fade-in">
+      {/* Settings Controls */}
+      <div className="absolute top-4 right-4 flex items-center gap-2">
+        <LanguageSwitcher />
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={toggleTheme}
+          aria-label="Toggle theme"
+          className="relative overflow-hidden"
+        >
+          <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+          <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+        </Button>
+      </div>
+
       {/* Logo & Branding */}
       <div className="text-center mb-8">
         <Link to="/" className="inline-flex flex-col items-center gap-3 group">

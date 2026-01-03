@@ -9,12 +9,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Moon, Sun, User, LogOut, ChevronDown, Languages } from 'lucide-react'
+import { Moon, Sun, User, LogOut, ChevronDown } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
-import { languages } from '@/lib/i18n'
+import { LanguageSwitcher } from '@/components/LanguageSwitcher'
 
 export function Header() {
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
   const { user, logout } = useAuth()
   const { toggleTheme } = useTheme()
   const navigate = useNavigate()
@@ -23,8 +23,6 @@ export function Header() {
     await logout()
     navigate('/login')
   }
-
-  const currentLanguage = languages.find((l) => l.code === i18n.language) || languages[0]
 
   return (
     <header className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur-lg">
@@ -53,32 +51,7 @@ export function Header() {
         {/* Actions */}
         <div className="flex items-center gap-2">
           {/* Language Switcher */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                aria-label="Change language"
-                className="relative"
-              >
-                <Languages className="h-5 w-5" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-40 animate-scale-in">
-              {languages.map((lang) => (
-                <DropdownMenuItem
-                  key={lang.code}
-                  onClick={() => i18n.changeLanguage(lang.code)}
-                  className={`cursor-pointer ${
-                    currentLanguage.code === lang.code ? 'bg-primary/10 text-primary' : ''
-                  }`}
-                >
-                  <span className="mr-2">{lang.flag}</span>
-                  {lang.name}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <LanguageSwitcher />
 
           {/* Theme Toggle */}
           <Button
