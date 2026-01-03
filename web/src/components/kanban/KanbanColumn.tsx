@@ -38,7 +38,7 @@ export function KanbanColumn({
   const [newCardTitle, setNewCardTitle] = useState('')
 
   const { setNodeRef, isOver } = useDroppable({
-    id: column.id,
+    id: `column-${column.id}`,
     data: {
       type: 'column',
       column,
@@ -96,7 +96,7 @@ export function KanbanColumn({
       {/* Cards */}
       <div className="flex-1 overflow-y-auto p-2 space-y-2">
         <SortableContext
-          items={cards.map((c) => c.id)}
+          items={cards.map((c) => `card-${c.id}`)}
           strategy={verticalListSortingStrategy}
         >
           {cards.map((card) => (

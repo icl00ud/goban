@@ -248,7 +248,7 @@ export function KanbanBoard({ board }: KanbanBoardProps) {
     >
       <div className="flex gap-4 p-4 h-full overflow-x-auto">
         <SortableContext
-          items={columns.map((c) => c.id)}
+          items={columns.map((c) => `column-${c.id}`)}
           strategy={horizontalListSortingStrategy}
         >
           {columns.map((column, index) => (
