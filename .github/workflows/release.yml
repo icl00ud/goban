@@ -49,6 +49,8 @@ jobs:
         env:
           TAG_NAME: ${{ github.ref_name }}
         run: |
+          # Remove stale _authToken so npm uses OIDC Trusted Publisher instead
+          npm config delete //registry.npmjs.org/:_authToken || true
           VERSION="${TAG_NAME#v}"
           npm version "$VERSION" --no-git-tag-version --allow-same-version
           npm publish --access public --provenance
