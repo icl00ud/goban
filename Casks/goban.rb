@@ -3,7 +3,7 @@ cask "goban" do
   name "goban"
   desc "Self-hosted kanban board CLI with MCP server and Telegram bot support"
   homepage "https://github.com/icl00ud/goban"
-  version "1.0.3"
+  version "1.0.4"
 
   livecheck do
     skip "Auto-generated on release."
@@ -14,22 +14,22 @@ cask "goban" do
   on_macos do
     on_intel do
       url "https://github.com/icl00ud/goban/releases/download/v#{version}/goban_#{version}_darwin_amd64.tar.gz"
-      sha256 "2c9364fb116cdf04b3b9ed7e0ccad75cdd9f5c56eff2e944e7d1d424993153e2"
+      sha256 "fdb117edce7368d421bc5fad6a529475f54944d2107ba32689e799ae8dbb52c4"
     end
     on_arm do
       url "https://github.com/icl00ud/goban/releases/download/v#{version}/goban_#{version}_darwin_arm64.tar.gz"
-      sha256 "4aeae7c430f1c0515395b91048049ebd7b3a249e9527fb5189848e59660634ff"
+      sha256 "bad27d7875494426f1839dca7c0dde631400c330beb66228ab5d2dba51817439"
     end
   end
 
   on_linux do
     on_intel do
       url "https://github.com/icl00ud/goban/releases/download/v#{version}/goban_#{version}_linux_amd64.tar.gz"
-      sha256 "95afe0103d2f817e1ee8faa9afb375af338248e5fd19ddb19bcd003e7c060058"
+      sha256 "f3bd35046b62c71d223b416c8a9eafee5ff231ec5e22a21ec9cbb0c9e62a2ee6"
     end
     on_arm do
       url "https://github.com/icl00ud/goban/releases/download/v#{version}/goban_#{version}_linux_arm64.tar.gz"
-      sha256 "54bd836301659e03f6422587654327e36cf143a929165f83f93cb85785fdf471"
+      sha256 "3eea7037e76883891140a33cc4914010665bbd2b2f4a887b0f6ec0df03eb04f6"
     end
   end
 
