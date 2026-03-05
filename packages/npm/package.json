@@ -1,6 +1,6 @@
 {
   "name": "goban-cli",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Self-hosted kanban board CLI with MCP server and Telegram bot support",
   "keywords": [
     "kanban",
