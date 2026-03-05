@@ -81,10 +81,13 @@ func (h *AuthHandler) Login(c *fiber.Ctx) error {
 		Path:     "/",
 	})
 
-	return utils.Success(c, dto.UserResponse{
-		ID:    user.ID,
-		Email: user.Email,
-		Name:  user.Name,
+	return utils.Success(c, dto.LoginResponse{
+		User: dto.UserResponse{
+			ID:    user.ID,
+			Email: user.Email,
+			Name:  user.Name,
+		},
+		Token: token,
 	})
 }
 

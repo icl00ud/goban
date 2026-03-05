@@ -1,16 +1,23 @@
 package middleware
 
 import (
+	"strings"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/icl00ud/goban/internal/handlers"
 	"github.com/icl00ud/goban/internal/utils"
 )
 
-// AuthMiddleware validates JWT tokens from cookies
+// AuthMiddleware validates JWT tokens from cookies or Authorization header
 func AuthMiddleware(jwtSecret string) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		// Get token from cookie
 		token := c.Cookies(handlers.CookieName)
+		if token == "" {
+			if auth := c.Get("Authorization"); strings.HasPrefix(auth, "Bearer ") {
+				token = strings.TrimPrefix(auth, "Bearer ")
+			}
+		}
 		if token == "" {
 			return utils.Unauthorized(c, "Authentication required")
 		}

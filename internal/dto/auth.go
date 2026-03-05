@@ -19,3 +19,9 @@ type UserResponse struct {
 	Email string `json:"email"`
 	Name  string `json:"name"`
 }
+
+// LoginResponse includes user data and the JWT token for programmatic clients
+type LoginResponse struct {
+	User  UserResponse `json:"user"`
+	Token string       `json:"token"`
+}

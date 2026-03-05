@@ -6,6 +6,7 @@ bin/
 *.so
 *.dylib
 goban
+!cmd/goban/
 __debug_bin*
 
 # Database files
