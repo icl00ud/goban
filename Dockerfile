@@ -17,7 +17,7 @@ COPY web/ ./
 RUN bun run build
 
 # Stage 2: Build Backend
-FROM golang:1.23-alpine AS backend-builder
+FROM golang:1.24-alpine AS backend-builder
 
 # Install build dependencies (needed for SQLite CGO)
 RUN apk add --no-cache gcc musl-dev
