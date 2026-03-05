@@ -1,0 +1,25 @@
+{
+  "name": "goban-cli",
+  "version": "0.0.0",
+  "description": "Self-hosted kanban board CLI with MCP server and Telegram bot support",
+  "keywords": ["kanban", "cli", "mcp", "self-hosted"],
+  "homepage": "https://github.com/icl00ud/goban",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/icl00ud/goban.git"
+  },
+  "license": "MIT",
+  "bin": {
+    "goban": "./goban.js"
+  },
+  "scripts": {
+    "postinstall": "node install.js"
+  },
+  "files": [
+    "goban.js",
+    "install.js"
+  ],
+  "engines": {
+    "node": ">=18"
+  }
+}

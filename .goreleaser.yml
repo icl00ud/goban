@@ -1,0 +1,80 @@
+version: 2
+
+project_name: goban
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - id: goban
+    main: ./cmd/goban
+    binary: goban
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    ignore:
+      - goos: windows
+        goarch: arm64
+    ldflags:
+      - -s -w -X main.version={{.Version}}
+
+archives:
+  - id: default
+    formats: [tar.gz]
+    format_overrides:
+      - goos: windows
+        formats: [zip]
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    files:
+      - none*
+
+checksum:
+  name_template: "checksums.txt"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+      - "^chore:"
+      - "Merge pull request"
+
+release:
+  github:
+    owner: icl00ud
+    name: goban
+  draft: false
+  prerelease: auto
+  name_template: "v{{ .Version }}"
+
+homebrew_casks:
+  - name: goban
+    homepage: https://github.com/icl00ud/goban
+    description: "Self-hosted kanban board CLI with MCP server and Telegram bot support"
+    license: MIT
+    repository:
+      owner: icl00ud
+      name: homebrew-goban
+      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
+    directory: Casks
+
+nfpms:
+  - id: packages
+    package_name: goban
+    homepage: https://github.com/icl00ud/goban
+    description: "Self-hosted kanban board CLI with MCP server and Telegram bot support"
+    maintainer: "icl00ud"
+    license: MIT
+    formats:
+      - deb
+      - rpm
+      - apk
+    bindir: /usr/local/bin

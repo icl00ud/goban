@@ -1,4 +1,4 @@
-.PHONY: dev dev-frontend dev-backend build build-frontend build-backend docker docker-build docker-run clean
+.PHONY: dev dev-frontend dev-backend build build-frontend build-backend build-cli docker docker-build docker-run clean release snapshot
 
 # Development
 dev-frontend:
@@ -16,7 +16,17 @@ build-frontend:
 build-backend: build-frontend
 	go build -o bin/goban ./cmd/server
 
-build: build-backend
+build-cli:
+	CGO_ENABLED=0 go build -o bin/goban ./cmd/goban
+
+build: build-backend build-cli
+
+# Release (requires goreleaser installed and a v* git tag)
+snapshot:
+	goreleaser release --snapshot --clean
+
+release:
+	goreleaser release --clean
 
 # Docker
 docker-build:
@@ -47,6 +57,9 @@ help:
 	@echo "  build-frontend  - Build frontend for production"
 	@echo "  build-backend   - Build backend with embedded frontend"
 	@echo "  build           - Build everything"
+	@echo "  build-cli       - Build CLI binary (cmd/goban)"
+	@echo "  snapshot        - Local GoReleaser snapshot build"
+	@echo "  release         - Release via GoReleaser (requires tag)"
 	@echo "  docker-build    - Build Docker image"
 	@echo "  docker-run      - Run Docker container"
 	@echo "  clean           - Remove build artifacts"
