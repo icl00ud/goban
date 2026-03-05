@@ -62,8 +62,8 @@ homebrew_casks:
     license: MIT
     repository:
       owner: icl00ud
-      name: homebrew-goban
-      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
+      name: goban
+      token: "{{ .Env.GITHUB_TOKEN }}"
     directory: Casks
 
 nfpms:
